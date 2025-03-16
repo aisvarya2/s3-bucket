@@ -23,7 +23,7 @@ resource "random_string" "this" {
 }
 
 resource "aws_s3_bucket" "this" {
-  bucket = format("-", [random_string.this.id, var.bucket_name])
+  bucket = join("-", [random_string.this.id, var.bucket_name])
 
   tags = {
     Name        = "Home assignment - S3 bucket"
@@ -67,19 +67,3 @@ resource "aws_s3_bucket_versioning" "this" {
 }
 
 
-# s3 bucket policy
-resource "aws_s3_bucket_policy" "this" {
-  bucket = aws_s3_bucket.this.id
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect    = "Allow"
-        Principal = "*"
-        Action    = "s3:GetObject"
-        Resource  = "${aws_s3_bucket.this.arn}/*"
-      }
-    ]
-  })
-}
